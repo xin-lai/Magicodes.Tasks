@@ -32,7 +32,7 @@ namespace Magicodes.Tasks
         ///     任务类型集合
         /// </summary>
 
-        protected ConcurrentDictionary<string, Type> TaskTypes =
+        public ConcurrentDictionary<string, Type> TaskTypes =
            new ConcurrentDictionary<string, Type>();
 
         /// <summary>
@@ -43,7 +43,8 @@ namespace Magicodes.Tasks
         /// <summary>
         /// 初始化执行
         /// </summary>
-        public Action<TaskManager> InitAction = (taskManager) => Task.Run(() => {
+        public Action<TaskManager> InitAction = (taskManager) =>
+        {
             foreach (
                     var currentassembly in
                     AppDomain.CurrentDomain.GetAssemblies().Where(p => p.FullName.StartsWith("Magicodes")))
@@ -82,7 +83,7 @@ namespace Magicodes.Tasks
                 {
                     taskManager.TaskManagerLogger.Log(LoggerLevels.Error, ex);
                 }
-        });
+        };
 
         /// <summary>
         /// 启动任务
@@ -98,16 +99,19 @@ namespace Magicodes.Tasks
                 var instance = (TaskBase)Activator.CreateInstance(type);
                 instance.Logger = TaskLogger;
                 instance.Notifier = Notifier;
-                instance.NotifyInfo = notifyInfo;
-                //当通知标题没有赋值时，使用Task Title
-                if (string.IsNullOrEmpty(instance.NotifyInfo.Title))
-                    instance.NotifyInfo.Title = instance.Title;
-
+                if (notifyInfo != null)
+                {
+                    instance.NotifyInfo = notifyInfo;
+                    //当通知标题没有赋值时，使用Task Title
+                    if (string.IsNullOrEmpty(instance.NotifyInfo.Title))
+                        instance.NotifyInfo.Title = instance.Title;
+                }
                 instance.Parameter = parameter;
                 //执行
                 TaskRunAction.Invoke(instance);
             }
-            throw new KeyNotFoundException(keyword + " 不存在！");
+            else
+                throw new KeyNotFoundException(keyword + " 不存在！");
         }
 
         /// <summary>
