@@ -38,7 +38,28 @@ namespace Magicodes.Tasks
         /// <summary>
         /// 任务执行
         /// </summary>
-        public Action<TaskBase> TaskRunAction = (instance) => Task.Run(() => instance.Run());
+        public Action<TaskBase, Action<TaskBase>> TaskRunAction = (instance, taskCompleteAction) => Task.Run(() =>
+        {
+            try
+            {
+                instance.Run();
+            }
+            catch (Exception ex)
+            {
+                instance.Exception = ex;
+                instance.Logger.Log(LoggerLevels.Error, ex);
+            }
+            finally
+            {
+                if (taskCompleteAction != null)
+                    taskCompleteAction.Invoke(instance);
+            }
+        });
+
+        /// <summary>
+        /// 任务执行完成
+        /// </summary>
+        public Action<TaskBase> TaskCompleteAction { get; set; }
 
         /// <summary>
         /// 初始化执行
@@ -108,7 +129,7 @@ namespace Magicodes.Tasks
                 }
                 instance.Parameter = parameter;
                 //执行
-                TaskRunAction.Invoke(instance);
+                TaskRunAction.Invoke(instance, TaskCompleteAction);
             }
             else
                 throw new KeyNotFoundException(keyword + " 不存在！");

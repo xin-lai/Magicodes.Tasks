@@ -62,6 +62,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TeskTaskWithException.cs" />
+    <Compile Include="TeskTaskWithParams.cs" />
     <Compile Include="TeskTask.cs" />
     <Compile Include="TestNotifier.cs" />
     <Compile Include="TaskUnitTest.cs" />

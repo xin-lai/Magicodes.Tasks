@@ -13,7 +13,8 @@ namespace Magicodes.Tasks.Builder
         INotifier Notifier { get; set; }
         LoggerBase TaskLogger { get; set; }
         LoggerBase TaskManagerLogger { get; set; }
-        Action<TaskBase> TaskRunAction { get; set; }
+        Action<TaskBase, Action<TaskBase>> TaskRunAction { get; set; }
+        Action<TaskBase> TaskCompleteAction { get; set; }
         Action<TaskManager> InitAction { get; set; }
         /// <summary>
         ///     创建实例
@@ -53,9 +54,20 @@ namespace Magicodes.Tasks.Builder
         /// </summary>
         /// <param name="taskRunAction">任务执行逻辑</param>
         /// <returns></returns>
-        public TaskBuilder WithTaskRunAction(Action<TaskBase> taskRunAction)
+        public TaskBuilder WithTaskRunAction(Action<TaskBase, Action<TaskBase>> taskRunAction)
         {
             TaskRunAction = taskRunAction;
+            return this;
+        }
+
+        /// <summary>
+        /// 设置执行完成处理逻辑函数
+        /// </summary>
+        /// <param name="taskCompleteAction">执行完成处理逻辑函数</param>
+        /// <returns></returns>
+        public TaskBuilder WithTaskCompleteAction(Action<TaskBase> taskCompleteAction)
+        {
+            TaskCompleteAction = taskCompleteAction;
             return this;
         }
 
@@ -81,6 +93,7 @@ namespace Magicodes.Tasks.Builder
                 Notifier = Notifier,
                 TaskLogger = TaskLogger,
                 TaskManagerLogger = TaskManagerLogger,
+                TaskCompleteAction = TaskCompleteAction
                 //TaskRunAction = TaskRunAction,
                 //InitAction = InitAction
             };

@@ -14,6 +14,10 @@ namespace Magicodes.Tasks
     public abstract class TaskBase : ITask
     {
         /// <summary>
+        /// 异常
+        /// </summary>
+        public Exception Exception { get; internal set; }
+        /// <summary>
         /// 任务关键字，为空则使用类名
         /// </summary>
         public virtual string Keyword
